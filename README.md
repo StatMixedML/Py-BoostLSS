@@ -21,3 +21,8 @@ The implementation of Py-BoostLSS relies on the following resources:
 - [SketchBoost: Fast Gradient Boosted Decision Tree for Multioutput Problems](https://openreview.net/forum?id=WSxarC8t-T)
 
 We genuinely thank the original authors [Anton Vakhrushev](https://www.kaggle.com/btbpanda) and [Leonid Iosipoi](http://iosipoi.com/) for making their work publicly available.
+
+## Reference Paper
+März, Alexander (2022) [*Multi-Target XGBoostLSS Regression*](https://arxiv.org/abs/2210.06831). <br/>
+März, A. and Kneib, T. (2022) [*"Distributional Gradient Boosting Machines"*](https://arxiv.org/abs/2204.00778). <br/>
+März, Alexander (2019) [*XGBoostLSS - An extension of XGBoost to probabilistic forecasting*](https://arxiv.org/abs/1907.03178).
