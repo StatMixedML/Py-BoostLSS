@@ -1,6 +1,6 @@
 # Py-BoostLSS: An extension of Py-Boost to probabilistic modelling
 
-We present a probabilistic extension of the recently introduced [Py-Boost](https://github.com/sb-ai-lab/Py-Boost) approach. Modelling and predicting the entire conditional distribution greatly improves upon existing tree-based gradient boosting implementations, as it allows to create probabilistic predictions from which intervals and quantiles of interest can be derived. 
+We present a probabilistic extension of the recently introduced [Py-Boost](https://github.com/sb-ai-lab/Py-Boost) approach and model all moments of a parametric multivariate distribution as functions of covariates. This allows us to create probabilistic predictions from which intervals and quantiles of interest can be derived. 
 
 ## Motivation
 
