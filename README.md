@@ -4,7 +4,7 @@ We present a probabilistic extension of the recently introduced [Py-Boost](https
 
 ## Motivation
 
-Existing implementations of Gradient Boosting Machines, such as XGBoost and LightGBM, are mostly designed for single-target regression tasks. While efficient for low to medium target-dimensions, the computational cost of estimating these models becomes prohibitive in high-dimensional settings. 
+Existing implementations of Gradient Boosting Machines, such as XGBoost and LightGBM, are mostly designed for single-target regression tasks. While efficient for low to medium target-dimensions, the computational cost of estimating them becomes prohibitive in high-dimensional settings. 
 
 As an example, consider modelling a multivariate Gaussian distribution with `D=100` target variables, where the covariance matrix is approximated using the Cholesky-Decomposition. Modelling all conditional moments requires estimation of `D(D + 3)/2 = 5,150` parameters. Because both XGBoost and LightGBM follow a *one vs. all strategy*, with a separate tree grown for each parameter, estimating these many parameters for a large dataset can become computationally very expensive. 
 
