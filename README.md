@@ -13,6 +13,8 @@ Borrowing from the original paper [SketchBoost: Fast Gradient Boosted Decision T
 <img src="https://user-images.githubusercontent.com/41187941/205011855-0e06247f-609f-4c12-9c53-9e00df91b2d9.png" width="350" height="200" />
 </p>
 
+Even though the original implementation of Py-Boost also supports estimation of univariate responses, Py-BoostLSS focuses on multi-target probabilistic regression settings. For univariate probabilistic GBMs, we refer to our implementations of [XGBoostLSS](https://github.com/StatMixedML/XGBoostLSS) and [LightGBMLSS](https://github.com/StatMixedML/LightGBMLSS).
+
 ## Acknowledgements
 
 The implementation of Py-BoostLSS relies on the following resources:
@@ -20,7 +22,7 @@ The implementation of Py-BoostLSS relies on the following resources:
 - [Py-boost: a research tool for exploring GBDTs](https://github.com/sb-ai-lab/Py-Boost)
 - [SketchBoost: Fast Gradient Boosted Decision Tree for Multioutput Problems](https://openreview.net/forum?id=WSxarC8t-T)
 
-We genuinely thank the original authors [Anton Vakhrushev](https://www.kaggle.com/btbpanda) and [Leonid Iosipoi](http://iosipoi.com/) for making their work publicly available.
+We genuinely thank the original authors [Anton Vakhrushev](https://www.kaggle.com/btbpanda) and [Leonid Iosipoi](http://iosipoi.com/) for making their work publicly available. 
 
 ## Reference Paper
 März, Alexander (2022) [*Multi-Target XGBoostLSS Regression*](https://arxiv.org/abs/2210.06831). <br/>
