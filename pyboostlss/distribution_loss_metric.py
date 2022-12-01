@@ -74,16 +74,12 @@ class Distribution_Loss(Loss):
     
     def base_score(self, y_true):
         """
-        Defines how to initialize model.                
+        Defines how parameter estimates are initialized.               
         """             
-        
-        ###
-        # Settings
-        ###
+
         n_obs = y_true.shape[0]
         n_param = y_true.shape[1]
-        n_target = self.dist.response_dim(n_param)                                           
-       
+        n_target = self.dist.response_dim(n_param)     
         base_margin = self.dist.initialize(y_true, n_target)
                       
         return base_margin
