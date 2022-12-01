@@ -8,7 +8,7 @@ Existing implementations of Gradient Boosting Machines, such as XGBoost and Ligh
 
 As an example, consider modelling a multivariate Gaussian distribution with `D=100` target variables, where the covariance matrix is approximated using the Cholesky-Decomposition. Modelling all conditional moments requires estimation of `D(D + 3)/2 = 5,150` parameters. Because both XGBoost and LightGBM follow a *one vs. all strategy*, with a separate tree grown for each parameter, estimating these many parameters for a large dataset can become computationally very expensive. 
 
-The recently introduced [Py-Boost](https://github.com/sb-ai-lab/Py-Boost) approach provides a more runtime efficient GBM implementation, which makes it a good candidate for estimating high-dimensional target variables in a probabilistic setting. Borrowing from the original paper [SketchBoost: Fast Gradient Boosted Decision Tree for Multioutput Problems](https://openreview.net/forum?id=WSxarC8t-T), the following figure illustrates the runtime-efficiency of the Py-Boost model.
+The recently introduced [Py-Boost](https://github.com/sb-ai-lab/Py-Boost) approach provides a more runtime efficient GBM implementation, making it a good candidate for estimating high-dimensional target variables in a probabilistic setting. Borrowing from the original paper [SketchBoost: Fast Gradient Boosted Decision Tree for Multioutput Problems](https://openreview.net/forum?id=WSxarC8t-T), the following figure illustrates the runtime-efficiency of the Py-Boost model.
 
 <p align="center">
 <img src="https://user-images.githubusercontent.com/41187941/205011855-0e06247f-609f-4c12-9c53-9e00df91b2d9.png" width="350" height="200" />
