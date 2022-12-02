@@ -1,9 +1,10 @@
 import torch
-from torch.autograd import grad as autograd
 from torch.distributions.multivariate_normal import MultivariateNormal
 from scipy.stats import multivariate_normal
 import cupy as cp 
 import numpy as np
+import pandas as pd
+from pyboostlss.utils import *
 
 
 
@@ -52,58 +53,22 @@ class MVN:
         
         return n_param
 
-
-
-    # @staticmethod
-    def response_dim(self, n_param: int) -> int:
-        """Infers the number of targets from number of distributional parameters.
-        """    
-        a = 1
-        b = 3
-        c = -2*n_param
-        d = (b**2) - (4*a*c)
-        n_target = int((-b+cp.sqrt(d))/(2*a))
-
-        return n_target
     
     
     # @staticmethod
     def tril_dim(self, n_target: int) -> int:
-        """Infers the number of lower diagonal elements from number of targets
+        """Infers the number of lower diagonal elements from number of targets.
         """    
         n_tril = int((n_target * (n_target + 1)) / 2)
 
         return n_tril
     
     
-    # @staticmethod
-    def calc_corr(self, cov_mat: torch.tensor) -> torch.tensor:
-        """Calculates the lower correlation matrix from covariance matrix.
-        """   
-        diag = torch.sqrt(torch.diag(torch.diag(cov_mat)))
-        diag_inv = torch.linalg.inv(diag)
-        cor_mat = diag_inv @ cov_mat @ diag_inv 
-        cor_mat = cor_mat[np.tril_indices_from(cor_mat, k=-1)]
-
-        return cor_mat
-    
-    
-    
-    # @staticmethod
-    def identity(self, predt: torch.tensor) -> torch.tensor:
-        """Identity mapping of predt.
-        """
-        return predt
-    
-    
-    # @staticmethod
-    def exp_fun(self, predt: torch.tensor) -> torch.tensor:
-        """Exp() function used to ensure predt is strictly positive.
-        """
-        predt_adj = torch.exp(predt) 
-        predt_adj = torch.nan_to_num(predt_adj, nan=float(torch.nanmean(predt_adj))) + torch.tensor(1e-6, dtype=predt_adj.dtype, device="cuda")
-        
-        return predt_adj
+    def rho_dim(self, n_target: int) -> int:
+        """Infers the number of correlations from number of targets.
+        """           
+        n_rho = int((n_target * (n_target - 1)) / 2)
+        return n_rho
     
     
     
@@ -117,7 +82,7 @@ class MVN:
 
 
         # Location
-        param_dict = {"location_" + str(i+1): self.identity for i in range(n_target)}
+        param_dict = {"location_" + str(i+1): identity_fn for i in range(n_target)}
 
         # Tril
         tril_idx = (tril_indices.detach().numpy()) + 1
@@ -129,9 +94,9 @@ class MVN:
 
         for i in range(n_tril):
             if tril_diag[i] == True:
-                tril_dict.update({"scale_" + str(tril_idx[:,i][1]): self.exp_fun}) 
+                tril_dict.update({"scale_" + str(tril_idx[:,i][1]): exp_fn}) 
             else:
-                tril_dict.update({"rho_" + str(tril_idx[:,i][0]) + str(tril_idx[:,i][1]): self.identity})
+                tril_dict.update({"rho_" + str(tril_idx[:,i][0]) + str(tril_idx[:,i][1]): identity_fn})
 
         param_dict.update(tril_dict)
 
@@ -157,11 +122,12 @@ class MVN:
 
         for i in range(n_tril):
             if tril_diag[i] == True:
-                tril_dict.update({"scale_" + str(tril_idx[:,i][1]): self.exp_fun})
+                tril_dict.update({"scale_" + str(tril_idx[:,i][1]): exp_fn})
             else:
-                tril_dict.update({"rho_" + str(tril_idx[:,i][0]) + str(tril_idx[:,i][1]): self.identity})
+                tril_dict.update({"rho_" + str(tril_idx[:,i][0]) + str(tril_idx[:,i][1]): identity_fn})
 
         return tril_dict
+    
     
     
     # @staticmethod
@@ -182,7 +148,7 @@ class MVN:
         ###
         n_obs = y_true.shape[0]
         n_param = y_true.shape[1]
-        n_target = self.response_dim(n_param)                                            
+        n_target = response_dim(y_true)                                            
         n_tril = self.tril_dim(n_target)
         tril_indices = torch.tril_indices(row=n_target, col=n_target, offset=0)       
         param_dict = self.create_param_dict(n_target,tril_indices)                       
@@ -205,7 +171,7 @@ class MVN:
         predt_location = torch.concat(predt[:n_target],axis=1)    
 
         # Tril: response function has to be included in computational graph explicitly
-        preds_scale = self.exp_fun(predt[1])
+        preds_scale = exp_fn(predt[1])
         tril_predt = predt[n_target:]
         tril_predt = [response_fun(tril_predt[i]) for i, (dist_param, response_fun) in enumerate(tril_param_dict.items())] 
         tril_predt = torch.concat(tril_predt,axis=1)    
@@ -224,90 +190,76 @@ class MVN:
     
     
     
-    # @staticmethod
-    def get_derivs(self, nll: torch.tensor, predt: torch.tensor) -> cp.ndarray:
-        """ Calculates gradients and hessians.
-        
-        Output gradients and hessians have shape (n_samples, n_outputs).
-        
-        Args:
-            nll: torch.tensor, calculated NLL
-            predt: torch.tensor, list of predicted paramters 
-            
-        Returns:
-        grad, hess
+    def predict(self, 
+                model,  
+                X_test: np.array, 
+                n_target: int,
+                pred_type: str = "parameters",                    
+                n_samples: int = 100
+               ):
         """
+        Predict function.
+
+        model: 
+            Instance of pyboostlss
+        X_test: np.array
+            Test data features
+        n_target: int
+            Specifies number of target variables. Needed for internally deriving indices for lower triangular matrix.
+        pred_type: str
+            Specifies what is to be predicted:
+                "samples": draws n_samples from the predicted response distribution. Output shape is (n_samples, n_obs, n_target)
+                "parameters": returns the predicted distributional parameters.
+        n_samples: int
+            If pred_type="response" specifies how many samples are drawn from the predicted response distribution.
+        Returns
+        -------
+        pd.DataFrame with n_samples drawn from predicted response distribution.
+
+        """
+                                                 
+        n_tril = self.tril_dim(n_target)
+        n_rho = self.rho_dim(n_target)
+        tril_indices = torch.tril_indices(row=n_target, col=n_target, offset=0)       
+        param_dict = self.create_param_dict(n_target,tril_indices)  
+        dist_params = list(param_dict.keys())
         
-        # Gradient and Hessian
-        grad_list = autograd(nll, inputs=predt, create_graph=True)
-        hess_list = [autograd(grad_list[i].nansum(), inputs=predt[i], retain_graph=True)[0] for i in range(len(grad_list))]         
+        # Predicted parameters
+        params_predt = torch.tensor(model.predict(X_test), device="cuda")
+        params_predt = [response_fun(params_predt[:, i]).reshape(-1,1) for i, (dist_param, response_fun) in enumerate(param_dict.items())] 
+
+
+        # Location
+        predt_location = torch.concatenate(params_predt[:n_target],axis=1)
+        predt_location_df = pd.DataFrame(predt_location.cpu().detach().numpy())
+        predt_location_df.columns = [param for param in dist_params if "location_" in param]
+
+        # Tril
+        n_obs = X_test.shape[0]
+        tril_predt = torch.concatenate(params_predt[n_target:],axis=1).reshape(-1, n_tril)
+        predt_tril = torch.zeros(n_obs, n_target, n_target, dtype=tril_predt.dtype, device="cuda")
+        predt_tril[:, tril_indices[0], tril_indices[1]] = tril_predt
+
+        # Estimated MVN
+        mvn_pred = MultivariateNormal(loc=predt_location, scale_tril=predt_tril) 
+
+        # Sigma
+        predt_sigma = mvn_pred.stddev.cpu().detach().numpy()
+        predt_sigma_df = pd.DataFrame(predt_sigma)
+        predt_sigma_df.columns = [param for param in dist_params if "scale_" in param]
+
+        # Rho
+        cov_mat = mvn_pred.covariance_matrix
+        predt_rho = torch.concatenate([calc_corr(cov_mat[i]).reshape(-1, n_rho) for i in range(n_obs)],axis=0)
+        predt_rho_df = pd.DataFrame(predt_rho.cpu().detach().numpy())
+        predt_rho_df.columns = [param for param in dist_params if "rho_" in param]
+
+        predt_params = pd.concat([predt_location_df, predt_sigma_df, predt_rho_df], axis=1)  
         
-        # Reshape
-        grad = cp.asarray(torch.concat(grad_list,axis=1).detach())
-        hess = cp.asarray(torch.concat(hess_list,axis=1).detach())      
+        if pred_type == "parameters":
+            return predt_params        
         
-        return grad, hess
-    
-
-    
-    
-    
-
-
-#     ###
-#     # Function for drawing random samples from predicted distribution
-#     ###
-#     def pred_dist_rvs(pred_params: pd.DataFrame, n_samples: int, seed: int):
-#         """
-#         Function that draws n_samples from a predicted response distribution.
-
-#         pred_params: pd.DataFrame
-#             Dataframe with predicted distributional parameters.
-#         n_samples: int
-#             Number of sample to draw from predicted response distribution.
-#         seed: int
-#             Manual seed.
-#         Returns
-#         -------
-#         pd.DataFrame with n_samples drawn from predicted response distribution.
-
-#         """
-#         pred_dist_list = []
-
-#         for i in range(pred_params.shape[0]):
-#             pred_dist_list.append(norm.rvs(loc=pred_params.loc[i,"location"],
-#                                            scale=pred_params.loc[i,"scale"],
-#                                            size=n_samples,
-#                                            random_state=seed)
-#                                   )
-
-#         pred_dist = pd.DataFrame(pred_dist_list)
-#         return pred_dist
-
-#     ###
-#     # Function for calculating quantiles from predicted distribution
-#     ###
-#     def pred_dist_quantile(quantiles: list, pred_params: pd.DataFrame):
-#         """
-#         Function that calculates the quantiles from the predicted response distribution.
-
-#         quantiles: list
-#             Which quantiles to calculate
-#         pred_params: pd.DataFrame
-#             Dataframe with predicted distributional parameters.
-
-#         Returns
-#         -------
-#         pd.DataFrame with calculated quantiles.
-
-#         """
-#         pred_quantiles_list = []
-
-#         for i in range(len(quantiles)):
-#             pred_quantiles_list.append(norm.ppf(quantiles[i],
-#                                                 loc = pred_params["location"],
-#                                                 scale = pred_params["scale"])
-#                                        )
-
-#         pred_quantiles = pd.DataFrame(pred_quantiles_list).T
-#         return pred_quantiles
+        elif pred_type == "samples":
+            torch.manual_seed(123)
+            y_samples = mvn_pred.sample((n_samples,))
+            return y_samples
