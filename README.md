@@ -40,10 +40,10 @@ We refer to the [examples section](https://github.com/StatMixedML/Py-BoostLSS/tr
 ## Available Distributions
 At this time, Py-BoostLSS supports the following distributions. More distribution will follow soon.
 
-| Distribution         | Usage   |Type                               | Support                   | Location                   | Scale                      | Shape | Correlation          |
-| :------------------: | :------:|:--------------------------------: | :-----------------------: | :------------------------: | :------------------------: | :---: | :-------------------:| 
-| Multivariate Normal  | `MVN()` | Continous <br /> (Multivariate)   | $y \in (-\infty,\infty)$  | $\mu \in (-\infty,\infty)$ | $\sigma \in (0,\infty)$    | None  | $\rho \in [-1,1]$    |
-|     ...              |  ...    |      ...                          |    ...                    |     ...                    |       ...                  |  ...  |  ...                 |
+| Distribution                               | Usage   |Type                               | Support                   | Location                   | Scale                      | Shape | Correlation          |
+| :----------------------------------------: | :------:|:--------------------------------: | :-----------------------: | :------------------------: | :------------------------: | :---: | :-------------------:| 
+| Multivariate Normal <br /> (Cholesky)      | `MVN()` | Continous <br /> (Multivariate)   | $y \in (-\infty,\infty)$  | $\mu \in (-\infty,\infty)$ | $\sigma \in (0,\infty)$    | None  | $\rho \in [-1,1]$    |
+|     ...                                    |  ...    |      ...                          |    ...                    |     ...                    |       ...                  |  ...  |  ...                 |
 
 
 
