@@ -1,5 +1,5 @@
 from pyboostlss.distributions import *
-from pyboostlss.distribution_loss_metric import *
+from pyboostlss.distributions.distribution_loss_metric import *
 from pyboostlss.utils import *
 from py_boost import SketchBoost
 
@@ -197,8 +197,6 @@ class pyboostlss:
         -------
         opt_params : Dict() with optimal parameters.
         """
-        
-        print(verbose)
 
         def objective(trial):
             
@@ -273,8 +271,8 @@ class pyboostlss:
 
 
         print("\nHyper-Parameter Optimization successfully finished.")
-        print("Number of finished trials: ", len(study.trials))
-        print("Best trial:")
+        print("  Number of finished trials: ", len(study.trials))
+        print("  Best trial:")
         opt_param = study.best_trial
 
         # Add optimal stopping round
@@ -282,8 +280,8 @@ class pyboostlss:
             study.trials_dataframe()["value"].idxmin()]
         opt_param.params["opt_rounds"] = int(opt_param.params["opt_rounds"])
 
-        print("  Value: {}".format(opt_param.value))
-        print("  Params: ")
+        print("    Value: {}".format(opt_param.value))
+        print("    Params: ")
         for key, value in opt_param.params.items():
             print("    {}: {}".format(key, value))
 
