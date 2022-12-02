@@ -40,7 +40,7 @@ We refer to the [examples section](https://github.com/StatMixedML/Py-BoostLSS/tr
 ## Available Distributions
 At this time, Py-BoostlSS supports the following distributions. More distribution will follow soon.
 
-<img align="center" src="../master/figures/distr.png">
+<img align="center" src="../master/misc/distr.png">
 
 
 ## Feedback
