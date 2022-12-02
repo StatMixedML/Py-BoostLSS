@@ -16,6 +16,27 @@ The recently introduced [Py-Boost](https://github.com/sb-ai-lab/Py-Boost) approa
 
 Even though the original implementation of Py-Boost also supports estimation of univariate responses, Py-BoostLSS focuses on multi-target probabilistic regression settings. For univariate probabilistic GBMs, we refer to our implementations of [XGBoostLSS](https://github.com/StatMixedML/XGBoostLSS) and [LightGBMLSS](https://github.com/StatMixedML/LightGBMLSS).
 
+## Installation
+
+Since Py-BoostLSS is GPU-based, we first need to install the corresponding libraries. You can check your cuda version with `nvcc --version`
+
+```python
+# Replace with your cuda version
+pip install cupy-cuda11x
+
+# Replace with your cude version
+pip3 install torch --extra-index-url https://download.pytorch.org/whl/cu11x
+```
+
+Next, you can install Py-BoostLSS
+
+```python
+pip install git+https://github.com/StatMixedML/Py-BoostLSS.git 
+```
+
+
+
+
 ## Acknowledgements
 
 The implementation of Py-BoostLSS relies on the following resources:
@@ -26,6 +47,8 @@ The implementation of Py-BoostLSS relies on the following resources:
 We genuinely thank the original authors [Anton Vakhrushev](https://www.kaggle.com/btbpanda) and [Leonid Iosipoi](http://iosipoi.com/) for making their work publicly available. 
 
 ## Reference Paper
+März, Alexander (2022) [*Py-BoostLSS: An extension of Py-Boost to probabilistic modelling*](). <br/>
+<br />
 März, Alexander (2022) [*Multi-Target XGBoostLSS Regression*](https://arxiv.org/abs/2210.06831). <br/>
 <br />
 März, A. and Kneib, T. (2022) [*"Distributional Gradient Boosting Machines"*](https://arxiv.org/abs/2204.00778). <br/>
