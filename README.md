@@ -18,13 +18,13 @@ Even though the original implementation of Py-Boost also supports estimation of 
 
 ## Installation
 
-Since Py-BoostLSS is GPU-based, we first need to install the corresponding libraries. You can check your cuda version with `nvcc --version`
+Since Py-BoostLSS is GPU-based, we first need to install the corresponding PyTorch and CuPy packages. You can check your cuda version with `nvcc --version`
 
 ```python
 # Replace with your cuda version
 pip install cupy-cuda11x
 
-# Replace with your cude version
+# Replace with your cuda version
 pip3 install torch --extra-index-url https://download.pytorch.org/whl/cu11x
 ```
 
