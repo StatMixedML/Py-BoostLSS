@@ -1,5 +1,6 @@
-from py_boost.gpu.losses import Loss, Metric
 import cupy as cp 
+from pyboostlss.utils import *
+from py_boost.gpu.losses import Loss, Metric
 
 
 
@@ -14,8 +15,14 @@ class Distribution_Metric(Metric):
     
 
     def error(self, y_true, y_pred):
-        """
-        """   
+        """Error metric definition. 
+        Args:
+            y_true: cp.array, targets
+            y_pred: cp.array, predictions
+            sample_weight: None or cp.ndarray, weights
+        Returns:
+            float, metric value
+        """  
 
         _, _, _, _, nll = self.dist.get_target_params_nll(y_true, y_pred)        
         nll = cp.asarray(nll)
@@ -55,6 +62,12 @@ class Distribution_Loss(Loss):
     def get_grad_hess(self, y_true, y_pred):
         """
         Defines how to calculate gradients and hessians for given loss.
+        Args:
+            y_true: cp.array, targets
+            y_pred: cp.array, predictions
+            sample_weight: None or cp.ndarray, weights
+        Returns:
+            floats, grad, hess
         """         
         
         ###
@@ -66,7 +79,7 @@ class Distribution_Loss(Loss):
         ###
         # Derivatives
         ###   
-        grad, hess = self.dist.get_derivs(nll, predt)       
+        grad, hess = get_derivs(nll, predt)       
         
         return grad, hess
     
@@ -74,12 +87,14 @@ class Distribution_Loss(Loss):
     
     def base_score(self, y_true):
         """
-        Defines how parameter estimates are initialized.               
+        Defines how parameter estimates are initialized. 
+        Args:
+            y_true: cp.array, targets
+        Returns:
+            floats, base_margins            
         """             
 
-        n_obs = y_true.shape[0]
-        n_param = y_true.shape[1]
-        n_target = self.dist.response_dim(n_param)     
+        n_target = response_dim(y_true)     
         base_margin = self.dist.initialize(y_true, n_target)
                       
         return base_margin
