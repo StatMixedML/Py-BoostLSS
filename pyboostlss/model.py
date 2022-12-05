@@ -263,6 +263,7 @@ class pyboostlss:
             bstLSS_cv.fit(dtrain["X"], y_train_append, eval_sets=eval_sets_append)    
             
 
+            # Add optimal rounds
             opt_rounds = bstLSS_cv.best_round
             trial.set_user_attr("opt_round", int(opt_rounds))
 
