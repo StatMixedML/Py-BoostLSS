@@ -21,13 +21,13 @@ Even though the original implementation of Py-Boost also supports estimation of 
 Since Py-BoostLSS is entirely GPU-based, we first need to install the corresponding PyTorch and CuPy packages. If you are on Windows, it is preferable to install CuPy via conda. All other OS can use pip. You can check your cuda version with `nvcc --version`.
 
 ```python
-# Replace with your cuda version
+# CuPy (replace with your cuda version)
   # Windows only
   conda install -c conda-forge cupy cudatoolkit=11.x # (Windows only)
   # Others
   pip install cupy-cuda11x
 
-# Replace with your cuda version
+# PyTorch (replace with your cuda version)
 pip3 install torch --extra-index-url https://download.pytorch.org/whl/cu11x
 ```
 
