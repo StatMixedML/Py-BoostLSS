@@ -13,7 +13,8 @@ from pyboostlss.utils import *
 ########################################################################################################################
 
 class MVN: 
-    """Multivariate Normal Distribution Class
+    """Multivariate Normal Distribution Class, where covariance matrix \Sigma is estimated via Cholesky-decomposition
+    \Sigma = LL`.
     """
     
     def __init__(self, D):
