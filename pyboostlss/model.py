@@ -13,8 +13,7 @@ class pyboostlss:
     """
     
     def train(dist=None,
-              X_train=None,
-              Y_train=None,
+              dtrain=None,
               eval_sets=None, 
               ntrees=100,
               lr=0.05,
@@ -47,8 +46,7 @@ class pyboostlss:
         Parameters
         ----------
         dist: str, pyboostlss.distributions class. Specifies distribution
-        X_train: Dataset with features
-        Y_train: Dataset with responses
+        dtrain: dict, Dataset used for training of the form {'X': y_train, 'y': y_train}
         eval_sets: list used to evaluate model during training, e.g., [{'X': X_train, 'y': Y_train}]
         ntrees: int, maximum number of trees
         lr: float, learning rate
@@ -106,23 +104,31 @@ class pyboostlss:
                                   )
         
         
-        bstLSS_train = bstLSS_init.fit(X_train, Y_train, eval_sets=eval_sets)
+        # Append Target
+        n_target = dtrain["y"].shape[1]
+        y_train_append = target_append(dtrain["y"], dist.n_dist_param(n_target))
+        
+        if eval_sets is not None:
+            y_eval_append = target_append(eval_sets[0]["y"] , dist.n_dist_param(n_target))
+            eval_sets_append = eval_sets.copy()
+            eval_sets_append[0]["y"] = y_eval_append
+            
+        else:
+            eval_sets_append = None       
+            
+        
+        bstLSS_train = bstLSS_init.fit(dtrain["X"], y_train_append, eval_sets=eval_sets_append)
         
         return bstLSS_train
             
-            
-        
-        
-
-
+                
 
 
 
 
     def hyper_opt(dist=None,
                   params=None,
-                  X_train=None,
-                  Y_train=None,
+                  dtrain=None,
                   eval_sets=None, 
                   ntrees=100,
                   lr=0.05,
@@ -141,6 +147,7 @@ class pyboostlss:
 
                   es=100,
                   seed=123,
+                  hp_seed=None,
                   verbose=int(1e04),
 
                   sketch_outputs=1,
@@ -161,9 +168,8 @@ class pyboostlss:
         Parameters
         ----------
         dist: str, pyboostlss.distributions class. Specifies distribution
-        params: dict, hyper-parameters and their ranges
-        X_train: Dataset with features
-        Y_train: Dataset with responses
+        params: dict, tunable hyper-parameters and their ranges
+        dtrain: dict, Dataset used for training of the form {'X': y_train, 'y': y_train}
         eval_sets: list used to evaluate model during training, e.g., [{'X': X_train, 'y': Y_train}]
         ntrees: int, maximum number of trees
         lr: float, learning rate
@@ -182,6 +188,7 @@ class pyboostlss:
         min_data_in_bin: int in [2, 256] minimal bin size. NOTE: currently ignored
         es: int, early stopping rounds. If 0, no early stopping
         seed: int, random state
+        hp_seed: int, Random state for random number generator used in the Bayesian hyper-parameter search
         verbose: int, verbosity freq
         sketch_outputs: int, number of outputs to keep
         sketch_method: str, name of the sketching strategy
@@ -240,9 +247,22 @@ class pyboostlss:
                                     )
             
             
-            bstLSS_cv.fit(X_train, Y_train, eval_sets=eval_sets)    
+            # Append Target
+            n_target = dtrain["y"].shape[1]
+            y_train_append = target_append(dtrain["y"], dist.n_dist_param(n_target))
 
-            # Add opt_rounds as a trial attribute, accessible via study.trials_dataframe(). # https://github.com/optuna/optuna/issues/1169
+            if eval_sets is not None:
+                y_eval_append = target_append(eval_sets[0]["y"] , dist.n_dist_param(n_target))
+                eval_sets_append = eval_sets.copy()
+                eval_sets_append[0]["y"] = y_eval_append
+            
+            else:
+                eval_sets_append = None
+              
+            
+            bstLSS_cv.fit(dtrain["X"], y_train_append, eval_sets=eval_sets_append)    
+            
+
             opt_rounds = bstLSS_cv.best_round
             trial.set_user_attr("opt_round", int(opt_rounds))
 
@@ -253,7 +273,7 @@ class pyboostlss:
             best_score = cp.asarray(nll)
 
             # Replace 0 value 
-            best_score = np.where(best_score == -0.0, 1e08, best_score)
+            best_score = cp.where(best_score == -0.0, 1e08, best_score)
 
             return best_score
         
@@ -261,10 +281,15 @@ class pyboostlss:
         if silence:
             optuna.logging.set_verbosity(optuna.logging.WARNING)
             
-        if study_name == None:
+        if study_name is None:
             study_name = "Py-BoostLSS Hyper-Parameter Optimization"
     
-        sampler = TPESampler() # seed=123
+    
+        if hp_seed is not None:
+            sampler = TPESampler(seed) 
+        else:
+            sampler = TPESampler()            
+        
         pruner = optuna.pruners.MedianPruner(n_startup_trials=10, n_warmup_steps=20)
         study = optuna.create_study(sampler=sampler, pruner=pruner, direction="minimize", study_name=study_name)
         study.optimize(objective, n_trials=n_trials, timeout=60 * max_minutes, show_progress_bar=True)
