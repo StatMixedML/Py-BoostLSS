@@ -42,7 +42,7 @@ At this time, Py-BoostLSS supports the following distributions. More distributio
 
 | Distribution                               | Usage   |Type                               | Support                   | Location                   | Scale                      | Shape | Correlation          |
 | :----------------------------------------: | :------:|:--------------------------------: | :-----------------------: | :------------------------: | :------------------------: | :---: | :-------------------:| 
-| Multivariate Normal <br /> (Cholesky)      | `MVN()` | Continous <br /> (Multivariate)   | $y \in (-\infty,\infty)$  | $\mu \in (-\infty,\infty)$ | $\sigma \in (0,\infty)$    | None  | $\rho \in [-1,1]$    |
+| Multivariate Normal <br /> (Cholesky)      | `MVN(D)` | Continous <br /> (Multivariate)   | $y \in (-\infty,\infty)$  | $\mu \in (-\infty,\infty)$ | $\sigma \in (0,\infty)$    | None  | $\rho \in [-1,1]$    |
 |     ...                                    |  ...    |      ...                          |    ...                    |     ...                    |       ...                  |  ...  |  ...                 |
 
 
