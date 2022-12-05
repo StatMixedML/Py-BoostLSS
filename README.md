@@ -23,7 +23,7 @@ Since Py-BoostLSS is entirely GPU-based, we first need to install the correspond
 ```python
 # CuPy (replace with your cuda version)
   # Windows only
-  conda install -c conda-forge cupy cudatoolkit=11.x # (Windows only)
+  conda install -c conda-forge cupy cudatoolkit=11.x 
   # Others
   pip install cupy-cuda11x
 
