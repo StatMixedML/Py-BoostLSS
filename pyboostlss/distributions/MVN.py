@@ -4,7 +4,7 @@ from scipy.stats import multivariate_normal
 import cupy as cp 
 import numpy as np
 import pandas as pd
-from pyboostlss.utils import *
+from pyboostlss.utils import * 
 
 
 
@@ -14,8 +14,11 @@ from pyboostlss.utils import *
 
 class MVN: 
     """Multivariate Normal Distribution Class
-
     """
+    
+    def __init__(self, D):
+        self.D = D # specifies target dimension
+        
     
     # @staticmethod
     def initialize(self, y_true: cp.ndarray, n_target: int) -> cp.ndarray:
@@ -148,7 +151,7 @@ class MVN:
         ###
         n_obs = y_true.shape[0]
         n_param = y_true.shape[1]
-        n_target = response_dim(y_true)                                            
+        n_target = self.D                                       
         n_tril = self.tril_dim(n_target)
         tril_indices = torch.tril_indices(row=n_target, col=n_target, offset=0)       
         param_dict = self.create_param_dict(n_target,tril_indices)                       
@@ -193,7 +196,6 @@ class MVN:
     def predict(self, 
                 model,  
                 X_test: np.array, 
-                n_target: int,
                 pred_type: str = "parameters",                    
                 n_samples: int = 100
                ):
@@ -204,8 +206,6 @@ class MVN:
             Instance of pyboostlss
         X_test: np.array
             Test data features
-        n_target: int
-            Specifies number of target variables. Needed for internally deriving indices for lower triangular matrix.
         pred_type: str
             Specifies what is to be predicted:
                 "samples": draws n_samples from the predicted response distribution. Output shape is (n_samples, n_obs, n_target)
@@ -217,7 +217,8 @@ class MVN:
         pd.DataFrame with n_samples drawn from predicted response distribution.
 
         """
-                                                 
+         
+        n_target = self.D    
         n_tril = self.tril_dim(n_target)
         n_rho = self.rho_dim(n_target)
         tril_indices = torch.tril_indices(row=n_target, col=n_target, offset=0)       
@@ -254,6 +255,7 @@ class MVN:
         predt_rho_df = pd.DataFrame(predt_rho.cpu().detach().numpy())
         predt_rho_df.columns = [param for param in dist_params if "rho_" in param]
 
+        # Output DataFrame
         predt_params = pd.concat([predt_location_df, predt_sigma_df, predt_rho_df], axis=1)  
         
         if pred_type == "parameters":
@@ -261,5 +263,5 @@ class MVN:
         
         elif pred_type == "samples":
             torch.manual_seed(123)
-            y_samples = mvn_pred.sample((n_samples,))
+            y_samples = mvn_pred.sample((n_samples,)).cpu().detach().numpy()
             return y_samples
