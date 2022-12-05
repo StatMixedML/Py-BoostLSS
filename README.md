@@ -22,8 +22,10 @@ Since Py-BoostLSS is entirely GPU-based, we first need to install the correspond
 
 ```python
 # Replace with your cuda version
-conda install -c conda-forge cupy cudatoolkit=11.x # (Windows only)
-pip install cupy-cuda11x
+  # Windows only
+  conda install -c conda-forge cupy cudatoolkit=11.x # (Windows only)
+  # Others
+  pip install cupy-cuda11x
 
 # Replace with your cuda version
 pip3 install torch --extra-index-url https://download.pytorch.org/whl/cu11x
