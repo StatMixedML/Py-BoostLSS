@@ -105,7 +105,7 @@ class pyboostlss:
         
         
         # Append Target
-        n_target = dtrain["y"].shape[1]
+        n_target = dist.D
         y_train_append = target_append(dtrain["y"], dist.n_dist_param(n_target))
         
         if eval_sets is not None:
@@ -248,7 +248,7 @@ class pyboostlss:
             
             
             # Append Target
-            n_target = dtrain["y"].shape[1]
+            n_target = dist.D
             y_train_append = target_append(dtrain["y"], dist.n_dist_param(n_target))
 
             if eval_sets is not None:
