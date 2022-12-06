@@ -9,3 +9,8 @@ __pycache__/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+
+# General
+Lib/
+Scripts/
+pyvenv.cfg
