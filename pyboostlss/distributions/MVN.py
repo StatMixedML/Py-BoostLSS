@@ -20,8 +20,7 @@ class MVN:
     def __init__(self, D):
         self.D = D # specifies target dimension
         
-    
-    # @staticmethod
+
     def initialize(self, y_true: cp.ndarray, n_target: int) -> cp.ndarray:
         """ Function that calculates the starting values, for each distributional parameter individually.
         y: cp.ndarray
@@ -49,7 +48,6 @@ class MVN:
 
 
 
-    # @staticmethod
     def n_dist_param(self, n_targets: int) -> int:
         """Infers the number of distributional parameters from target dimension.
         """
@@ -58,8 +56,7 @@ class MVN:
         return n_param
 
     
-    
-    # @staticmethod
+
     def tril_dim(self, n_target: int) -> int:
         """Infers the number of lower diagonal elements from number of targets.
         """    
@@ -75,8 +72,7 @@ class MVN:
         return n_rho
     
     
-    
-    # @staticmethod
+
     def create_param_dict(self, n_target, tril_indices):
         """ Dictionary that holds the name of distributional parameter and their corresponding response functions.
         """
@@ -107,8 +103,7 @@ class MVN:
         return param_dict    
     
     
-    
-    # @staticmethod
+
     def create_tril_dict(self, n_target, tril_indices):
         """ Dictionary that holds the name of distributional parameter and their corresponding response functions.
         """
@@ -133,8 +128,7 @@ class MVN:
         return tril_dict
     
     
-    
-    # @staticmethod
+
     def get_target_params_nll(self, y_true: cp.ndarray, y_pred: cp.ndarray, requires_grad=False) -> torch.tensor:
         """ Returns target and estimated parameters, where parameters are transformed to the output scale
         
