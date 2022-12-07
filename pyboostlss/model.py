@@ -1,7 +1,6 @@
 from pyboostlss.distributions.distribution_loss_metric import *
 from pyboostlss.utils import *
-from py_boost.gpu.sketch_boost import SketchBoost
-# from py_boost import SketchBoost
+from py_boost import SketchBoost
 
 import optuna
 from optuna.samplers import TPESampler
