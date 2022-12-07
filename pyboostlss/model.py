@@ -1,17 +1,22 @@
 from pyboostlss.distributions.distribution_loss_metric import *
 from pyboostlss.utils import *
-from py_boost import SketchBoost
+from py_boost.gpu.sketch_boost import SketchBoost
+# from py_boost import SketchBoost
 
 import optuna
 from optuna.samplers import TPESampler
 
-class pyboostlss:
+class PyBoostLSS_Regressor:
     """
     Py-BoostLSS model class. Currently only supports SketchBoost algorithm.
     
     """
-    
-    def train(dist=None,
+
+    def __init__(self, dist):
+        self.dist = dist # pyboostlss.distributions class. Specifies distribution
+
+
+    def train(self,
               dtrain=None,
               eval_sets=None, 
               ntrees=100,
@@ -44,9 +49,8 @@ class pyboostlss:
 
         Parameters
         ----------
-        dist: str, pyboostlss.distributions class. Specifies distribution
-        dtrain: dict, Dataset used for training of the form {'X': y_train, 'y': y_train}
-        eval_sets: list used to evaluate model during training, e.g., [{'X': X_train, 'y': Y_train}]
+        dtrain: dict, Dataset used for training of the form {'X': X_train, 'y': X_train}
+        eval_sets: list used to evaluate model during training, e.g., [{'X': X_train, 'y': X_train}]
         ntrees: int, maximum number of trees
         lr: float, learning rate
         min_gain_to_split: float >=0, minimal gain to split
@@ -73,8 +77,8 @@ class pyboostlss:
         
         """
         
-        bstLSS_init = SketchBoost(loss=Distribution_Loss(dist), 
-                                  metric=Distribution_Metric(dist),
+        bstLSS_init = SketchBoost(loss=Distribution_Loss(self.dist),
+                                  metric=Distribution_Metric(self.dist),
                                   ntrees=ntrees,
                                   lr=lr,
                                   min_gain_to_split=min_gain_to_split,
@@ -104,11 +108,11 @@ class pyboostlss:
         
         
         # Append Target
-        n_target = dist.D
-        y_train_append = dist.target_append(dtrain["y"], dist.n_dist_param(n_target))
+        n_target = self.dist.D
+        y_train_append = self.dist.target_append(dtrain["y"], self.dist.n_dist_param(n_target))
         
         if eval_sets is not None:
-            y_eval_append = dist.target_append(eval_sets[0]["y"] , dist.n_dist_param(n_target))
+            y_eval_append = self.dist.target_append(eval_sets[0]["y"] , self.dist.n_dist_param(n_target))
             eval_sets_append = eval_sets.copy()
             eval_sets_append[0]["y"] = y_eval_append
             
@@ -125,7 +129,7 @@ class pyboostlss:
 
 
 
-    def hyper_opt(dist=None,
+    def hyper_opt(self,
                   params=None,
                   dtrain=None,
                   eval_sets=None, 
@@ -166,10 +170,9 @@ class pyboostlss:
         
         Parameters
         ----------
-        dist: str, pyboostlss.distributions class. Specifies distribution
         params: dict, tunable hyper-parameters and their ranges
-        dtrain: dict, Dataset used for training of the form {'X': y_train, 'y': y_train}
-        eval_sets: list used to evaluate model during training, e.g., [{'X': X_train, 'y': Y_train}]
+        dtrain: dict, Dataset used for training of the form {'X': X_train, 'y': X_train}
+        eval_sets: list used to evaluate model during training, e.g., [{'X': X_train, 'y': X_train}]
         ntrees: int, maximum number of trees
         lr: float, learning rate
         min_gain_to_split: float >=0, minimal gain to split
@@ -216,51 +219,35 @@ class pyboostlss:
                 "min_gain_to_split": trial.suggest_float("min_gain_to_split", params["min_gain_to_split"][0], params["min_gain_to_split"][1])
             }   
             
-            bstLSS_cv = SketchBoost(loss=Distribution_Loss(dist), 
-                                    metric=Distribution_Metric(dist),
-                                    ntrees=ntrees,
-                                    lr=hyper_params["lr"],
-                                    min_gain_to_split=hyper_params["min_gain_to_split"],
-                                    lambda_l2=hyper_params["lambda_l2"],
-                                    gd_steps=gd_steps,
-                                    max_depth=hyper_params["max_depth"],
-                                    min_data_in_leaf=min_data_in_leaf,
-                                    colsample=hyper_params["colsample"],
-                                    subsample=hyper_params["subsample"],
+            bstLSS_cv = self.train(dtrain=dtrain,
+                                   eval_sets=eval_sets,
+                                   ntrees=ntrees,
+                                   lr=hyper_params["lr"],
+                                   min_gain_to_split=hyper_params["min_gain_to_split"],
+                                   lambda_l2=hyper_params["lambda_l2"],
+                                   gd_steps=gd_steps,
+                                   max_depth=hyper_params["max_depth"],
+                                   min_data_in_leaf=min_data_in_leaf,
+                                   colsample=hyper_params["colsample"],
+                                   subsample=hyper_params["subsample"],
 
-                                    quantization=quantization,
-                                    quant_sample=quant_sample,
-                                    max_bin=max_bin,
-                                    min_data_in_bin=min_data_in_bin,
+                                   quantization=quantization,
+                                   quant_sample=quant_sample,
+                                   max_bin=max_bin,
+                                   min_data_in_bin=min_data_in_bin,
 
-                                    es=es,
-                                    seed=seed,
-                                    verbose=verbose,
+                                   es=es,
+                                   seed=seed,
+                                   verbose=verbose,
 
-                                    sketch_outputs=hyper_params["sketch_outputs"],
-                                    sketch_method=sketch_method,
-                                    use_hess=use_hess,
+                                   sketch_outputs=hyper_params["sketch_outputs"],
+                                   sketch_method=sketch_method,
+                                   use_hess=use_hess,
 
-                                    callbacks=callbacks,
-                                    sketch_params=sketch_params
-                                    )
-            
-            
-            # Append Target
-            n_target = dist.D
-            y_train_append = dist.target_append(dtrain["y"], dist.n_dist_param(n_target))
+                                   callbacks=callbacks,
+                                   sketch_params=sketch_params
+                                   )
 
-            if eval_sets is not None:
-                y_eval_append = dist.target_append(eval_sets[0]["y"] , dist.n_dist_param(n_target))
-                eval_sets_append = eval_sets.copy()
-                eval_sets_append[0]["y"] = y_eval_append
-            
-            else:
-                eval_sets_append = None
-              
-            
-            bstLSS_cv.fit(dtrain["X"], y_train_append, eval_sets=eval_sets_append)    
-            
 
             # Add optimal rounds
             opt_rounds = bstLSS_cv.best_round
@@ -269,7 +256,7 @@ class pyboostlss:
             # Extract the best score
             y_true = eval_sets[0]["y"]
             y_pred = bstLSS_cv.predict(eval_sets[0]["X"])
-            _, _, _, _, nll = dist.get_target_params_nll(y_true, y_pred)        
+            _, _, _, _, nll = self.dist.get_target_params_nll(y_true, y_pred)
             best_score = cp.asarray(nll)
 
             # Replace 0 value 
