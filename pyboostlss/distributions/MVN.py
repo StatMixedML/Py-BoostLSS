@@ -17,7 +17,7 @@ class MVN:
     \Sigma = LL`.
     """
     
-    def __init__(self, D):
+    def __init__(self,D:int):
         self.D = D # specifies target dimension
         
 
@@ -55,7 +55,19 @@ class MVN:
         
         return n_param
 
-    
+
+    def target_append(self, y_true: np.ndarray, n_param: int) -> np.ndarray:
+        """Function that appends target to the number of specified parameters
+        """
+        n_obs = y_true.shape[0]
+        n_target = y_true.shape[1]
+        n_fill = n_param - n_target
+        np_fill = cp.ones((n_obs, n_fill))
+        y_append = cp.concatenate([y_true, np_fill],axis=1)
+
+        return y_append
+
+
 
     def tril_dim(self, n_target: int) -> int:
         """Infers the number of lower diagonal elements from number of targets.
