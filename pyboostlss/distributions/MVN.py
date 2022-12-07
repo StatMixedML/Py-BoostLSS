@@ -236,7 +236,7 @@ class MVN:
         predt_tril = torch.zeros(n_obs, n_target, n_target, dtype=tril_predt.dtype, device="cuda")
         predt_tril[:, tril_indices[0], tril_indices[1]] = tril_predt
 
-        # Estimated MVN
+        # Predicted Distribution
         mvn_pred = MultivariateNormal(loc=predt_location, scale_tril=predt_tril) 
 
         # Sigma
