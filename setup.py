@@ -19,7 +19,8 @@ setup(
     install_requires=[
         "py-boost~=0.3.0",
         "optuna~=3.0.3",
-        "pyro-ppl~=1.8.3", 
+        "pyro-ppl~=1.8.3",
+        "dirichlet~=0.9",
         "scikit-learn~=1.1.3",
         "numpy~=1.23.5",
         "pandas~=1.5.2",
