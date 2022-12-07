@@ -1,7 +1,7 @@
 from pyboostlss.distributions import *
 from pyboostlss.distributions.distribution_loss_metric import *
 from pyboostlss.utils import *
-from py_boost import SketchBoost
+from py_boost.gpu.sketch_boost import SketchBoost
 
 import optuna
 from optuna.samplers import TPESampler
@@ -106,10 +106,10 @@ class pyboostlss:
         
         # Append Target
         n_target = dist.D
-        y_train_append = target_append(dtrain["y"], dist.n_dist_param(n_target))
+        y_train_append = dist.target_append(dtrain["y"], dist.n_dist_param(n_target))
         
         if eval_sets is not None:
-            y_eval_append = target_append(eval_sets[0]["y"] , dist.n_dist_param(n_target))
+            y_eval_append = dist.target_append(eval_sets[0]["y"] , dist.n_dist_param(n_target))
             eval_sets_append = eval_sets.copy()
             eval_sets_append[0]["y"] = y_eval_append
             
@@ -249,10 +249,10 @@ class pyboostlss:
             
             # Append Target
             n_target = dist.D
-            y_train_append = target_append(dtrain["y"], dist.n_dist_param(n_target))
+            y_train_append = dist.target_append(dtrain["y"], dist.n_dist_param(n_target))
 
             if eval_sets is not None:
-                y_eval_append = target_append(eval_sets[0]["y"] , dist.n_dist_param(n_target))
+                y_eval_append = dist.target_append(eval_sets[0]["y"] , dist.n_dist_param(n_target))
                 eval_sets_append = eval_sets.copy()
                 eval_sets_append[0]["y"] = y_eval_append
             
