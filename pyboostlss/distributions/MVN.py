@@ -23,7 +23,7 @@ class MVN:
 
     def initialize(self, y_true: cp.ndarray, n_target: int) -> cp.ndarray:
         """ Function that calculates the starting values, for each distributional parameter individually.
-        y: cp.ndarray
+        y_true: cp.ndarray
             Data from which starting values are calculated.
         n_target: ndarray
             Number of target variables
