@@ -29,7 +29,7 @@ class MVN:
             Number of target variables
         """
         # Indices
-        tril_indices = cp.asarray(cp.tril_indices(n_target))
+        tril_indices = cp.asarray(np.tril_indices(n_target))
 
         # Target
         target = y_true[:,:n_target]
@@ -62,8 +62,8 @@ class MVN:
         n_obs = y_true.shape[0]
         n_target = y_true.shape[1]
         n_fill = n_param - n_target
-        np_fill = cp.ones((n_obs, n_fill))
-        y_append = cp.concatenate([y_true, np_fill],axis=1)
+        np_fill = np.ones((n_obs, n_fill))
+        y_append = np.concatenate([y_true, np_fill],axis=1)
 
         return y_append
 
