@@ -67,18 +67,6 @@ def response_dim(y_true: int) -> int:
 
     return n_target
 
-def target_append(Y_train: np.ndarray, n_param: int) -> np.ndarray:
-    """Function that appends target to the number of specified parameters
-    """    
-    n_obs = Y_train.shape[0]
-    n_target = Y_train.shape[1]
-    n_fill = n_param - n_target
-    np_fill = np.ones((n_obs, n_fill))
-    Y_train_append = np.concatenate([Y_train, np_fill],axis=1) 
-    
-    return Y_train_append    
-
-
 def calc_corr(cov_mat: torch.tensor) -> torch.tensor:
     """Calculates the lower correlation matrix from covariance matrix.
     """   
