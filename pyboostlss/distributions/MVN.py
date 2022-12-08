@@ -141,7 +141,7 @@ class MVN:
     
     
 
-    def get_target_params_nll(self, y_true: cp.ndarray, y_pred: cp.ndarray, requires_grad=False) -> torch.tensor:
+    def get_params_nll(self, y_true: cp.ndarray, y_pred: cp.ndarray, requires_grad=False) -> torch.tensor:
         """ Returns target and estimated parameters, where parameters are transformed to the output scale
         
         Args:
@@ -194,7 +194,7 @@ class MVN:
         dist_fit = MultivariateNormal(loc=predt_location, scale_tril=predt_tril)   
         nll = -torch.nansum(dist_fit.log_prob(target)) 
         
-        return target, predt, predt_location, predt_tril, nll
+        return predt, nll
     
     
     
