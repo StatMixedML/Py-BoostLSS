@@ -24,7 +24,7 @@ class Distribution_Metric(Metric):
             float, metric value
         """  
 
-        _, _, _, _, nll = self.dist.get_target_params_nll(y_true, y_pred)        
+        _, nll = self.dist.get_params_nll(y_true, y_pred)        
         nll = cp.asarray(nll)
 
         return nll
@@ -73,7 +73,7 @@ class Distribution_Loss(Loss):
         ###
         # Parameters and NLL
         ###
-        _, predt, _, _, nll = self.dist.get_target_params_nll(y_true, y_pred, requires_grad=True)
+        predt, nll = self.dist.get_params_nll(y_true, y_pred, requires_grad=True)
         
         
         ###
