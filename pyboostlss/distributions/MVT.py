@@ -189,7 +189,7 @@ class MVT:
         # Location
         predt_location = torch.concat(predt[1:(n_target+1)],axis=1)     
 
-        # Tril: response function has to be included in computational graph explicitly
+        # Tril
         tril_predt = predt[(n_target+1):]
         tril_predt = [response_fun(tril_predt[i]) for i, (dist_param, response_fun) in enumerate(tril_param_dict.items())] 
         tril_predt = torch.concat(tril_predt,axis=1)    
