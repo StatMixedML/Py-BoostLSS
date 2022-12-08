@@ -150,7 +150,7 @@ class MVN:
             requires_grad: bool(), Whether or not tensor requires gradient for automatic differentiation
             
         Returns:
-        target, predt, predt_location, predt_tril, nll
+        predt, nll
         """
         
         ###
