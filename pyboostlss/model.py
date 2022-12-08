@@ -255,7 +255,7 @@ class PyBoostLSS:
             # Extract the best score
             y_true = eval_sets[0]["y"]
             y_pred = bstLSS_cv.predict(eval_sets[0]["X"])
-            _, _, _, _, nll = self.dist.get_target_params_nll(y_true, y_pred)
+            _, nll = self.dist.get_params_nll(y_true, y_pred)
             best_score = cp.asarray(nll)
 
             # Replace 0 value 
@@ -270,9 +270,8 @@ class PyBoostLSS:
         if study_name is None:
             study_name = "Py-BoostLSS Hyper-Parameter Optimization"
     
-    
         if hp_seed is not None:
-            sampler = TPESampler(seed) 
+            sampler = TPESampler(seed=hp_seed) 
         else:
             sampler = TPESampler()            
         
@@ -297,6 +296,4 @@ class PyBoostLSS:
             print("    {}: {}".format(key, value))
 
         return opt_param.params
-
-
-    
+        
