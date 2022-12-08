@@ -63,7 +63,7 @@ class DIRICHLET:
     
     
 
-    def get_target_params_nll(self, y_true: cp.ndarray, y_pred: cp.ndarray, requires_grad=False) -> torch.tensor:
+    def get_params_nll(self, y_true: cp.ndarray, y_pred: cp.ndarray, requires_grad=False) -> torch.tensor:
         """ Returns target and estimated parameters, where parameters are transformed to the output scale
         
         Args:
@@ -112,7 +112,7 @@ class DIRICHLET:
         dist_fit = Dirichlet(predt_alpha)
         nll = -torch.nansum(dist_fit.log_prob(target)) 
         
-        return target, predt, predt_alpha, None, nll
+        return predt, nll
     
     
     
