@@ -22,6 +22,15 @@ def exp_fn(predt: torch.tensor) -> torch.tensor:
     return predt_adj
 
 
+def exp_fn_df(predt: torch.tensor) -> torch.tensor:
+    """Exp() function for StudentT df-paramter used to ensure predt is strictly positive.
+    """
+    predt_adj = torch.exp(predt) + torch.tensor(2.0, device="cuda")
+    predt_adj = torch.nan_to_num(predt_adj, nan=float(torch.nanmean(predt_adj))) + torch.tensor(1e-6, dtype=predt_adj.dtype, device="cuda")
+
+    return predt_adj
+
+
 
 
 ###
@@ -66,6 +75,7 @@ def response_dim(y_true: int) -> int:
     n_target = len(n_target[n_target == True])
 
     return n_target
+
 
 def calc_corr(cov_mat: torch.tensor) -> torch.tensor:
     """Calculates the lower correlation matrix from covariance matrix.
