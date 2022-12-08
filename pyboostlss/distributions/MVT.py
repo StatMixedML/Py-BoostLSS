@@ -97,7 +97,7 @@ class MVT:
         n_tril = self.tril_dim(n_target)
         
         # Df
-        param_dict = {"df": exp_fn}    
+        param_dict = {"df": exp_fn_df}    
 
         # Location
         loc_dict = {"location_" + str(i+1): identity_fn for i in range(n_target)}
@@ -184,7 +184,7 @@ class MVT:
         predt = [torch.tensor(y_pred[:,i].reshape(-1,1), device="cuda", requires_grad=requires_grad) for i in range(n_param)]
         
         # Df
-        predt_df = exp_fn(predt[0]).reshape(-1,) 
+        predt_df = exp_fn_df(predt[0]).reshape(-1,) 
 
         # Location
         predt_location = torch.concat(predt[1:(n_target+1)],axis=1)     
