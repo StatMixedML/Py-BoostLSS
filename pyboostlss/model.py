@@ -5,7 +5,7 @@ from py_boost import SketchBoost
 import optuna
 from optuna.samplers import TPESampler
 
-class PyBoostLSS_Regressor:
+class PyBoostLSS:
     """
     Py-BoostLSS model class. Currently only supports SketchBoost algorithm.
     
@@ -69,7 +69,7 @@ class PyBoostLSS_Regressor:
         seed: int, random state
         verbose: int, verbosity freq
         sketch_outputs: int, number of outputs to keep
-        sketch_method: str, name of the sketching strategy
+        sketch_method: str, name of the sketching strategy. Currently the following options are available: "topk", "rand", "proj". 
         use_hess: bool, use hessians in multioutput training
         callbacks: list of Callback, callbacks to customize training are passed here
         sketch_params: dict, optional kwargs for sketching strategy
@@ -192,7 +192,7 @@ class PyBoostLSS_Regressor:
         hp_seed: int, Random state for random number generator used in the Bayesian hyper-parameter search
         verbose: int, verbosity freq
         sketch_outputs: int, number of outputs to keep
-        sketch_method: str, name of the sketching strategy
+        sketch_method: str, name of the sketching strategy. Currently the following options are available: "topk", "rand", "proj". 
         use_hess: bool, use hessians in multioutput training
         callbacks: list of Callback, callbacks to customize training are passed here
         sketch_params: dict, optional kwargs for sketching strategy
