@@ -74,6 +74,12 @@ The implementation of Py-BoostLSS relies on the following resources:
 We genuinely thank the original authors [Anton Vakhrushev](https://www.kaggle.com/btbpanda) and [Leonid Iosipoi](http://iosipoi.com/) for making their work publicly available. 
 
 ## Reference Paper
+[![Arxiv link](https://img.shields.io/badge/arXiv-PyBoostLSS%3A%20An%20extension%20of%20PyBoost%20to%20probabilistic%20modelling-%09%23FF0000)]() <br/>
+[![Arxiv link](https://img.shields.io/badge/arXiv-Multi%20Target%20XGBoostLSS%20Regression-%09%23FF0000)](https://arxiv.org/abs/2210.06831) <br/>
+[![Arxiv link](https://img.shields.io/badge/arXiv-Distributional%20Gradient%20Boosting%20Machines-%09%23FF0000)](https://arxiv.org/abs/2204.00778) <br/>
+[![Arxiv link](https://img.shields.io/badge/arXiv-XGBoostLSS%3A%20An%20extension%20of%20XGBoost%20to%20probabilistic%20forecasting-%09%23FF0000)](https://arxiv.org/abs/1907.03178) <br/>
+
+<!---
 März, Alexander (2022) [*Py-BoostLSS: An extension of Py-Boost to probabilistic modelling*](). <br/>
 <br />
 März, Alexander (2022) [*Multi-Target XGBoostLSS Regression*](https://arxiv.org/abs/2210.06831). <br/>
@@ -81,3 +87,7 @@ März, Alexander (2022) [*Multi-Target XGBoostLSS Regression*](https://arxiv.org
 März, A. and Kneib, T. (2022) [*"Distributional Gradient Boosting Machines"*](https://arxiv.org/abs/2204.00778). <br/>
 <br />
 März, Alexander (2019) [*XGBoostLSS - An extension of XGBoost to probabilistic forecasting*](https://arxiv.org/abs/1907.03178).
+--->
+
+
+
