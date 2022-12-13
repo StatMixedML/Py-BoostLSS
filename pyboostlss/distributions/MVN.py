@@ -237,13 +237,13 @@ class MVN:
 
 
         # Location
-        predt_location = torch.concatenate(params_predt[:n_target],axis=1)
+        predt_location = torch.cat(params_predt[:n_target],axis=1)
         predt_location_df = pd.DataFrame(predt_location.cpu().detach().numpy())
         predt_location_df.columns = [param for param in dist_params if "location_" in param]
 
         # Tril
         n_obs = X_test.shape[0]
-        tril_predt = torch.concatenate(params_predt[n_target:],axis=1).reshape(-1, n_tril)
+        tril_predt = torch.cat(params_predt[n_target:],axis=1).reshape(-1, n_tril)
         predt_tril = torch.zeros(n_obs, n_target, n_target, dtype=tril_predt.dtype, device="cuda")
         predt_tril[:, tril_indices[0], tril_indices[1]] = tril_predt
 
@@ -257,7 +257,7 @@ class MVN:
 
         # Rho
         cov_mat = mvn_pred.covariance_matrix
-        predt_rho = torch.concatenate([calc_corr(cov_mat[i]).reshape(-1, n_rho) for i in range(n_obs)],axis=0)
+        predt_rho = torch.cat([calc_corr(cov_mat[i]).reshape(-1, n_rho) for i in range(n_obs)],axis=0)
         predt_rho_df = pd.DataFrame(predt_rho.cpu().detach().numpy())
         predt_rho_df.columns = [param for param in dist_params if "rho_" in param]
 
