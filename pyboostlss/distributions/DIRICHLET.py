@@ -148,7 +148,7 @@ class DIRICHLET:
         
         # Predicted parameters
         params_predt = torch.tensor(model.predict(X_test), device="cuda")
-        params_predt = torch.concatenate(
+        params_predt = torch.cat(
             [response_fun(params_predt[:, i]).reshape(-1,1) for i, (dist_param, response_fun) in enumerate(param_dict.items())],
             axis=1)
 
