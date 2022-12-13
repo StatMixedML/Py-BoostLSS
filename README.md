@@ -47,7 +47,7 @@ At this time, Py-BoostLSS supports the following distributions. More distributio
 | :----------------------------------------: |:--------------: |:--------------------------------: | :-----------------------: | 
 | Multivariate Normal <br /> (Cholesky)      | `MVN()`         | Continous <br /> (Multivariate)   | $y \in (-\infty,\infty)$  | 
 | Multivariate Student-T <br /> (Cholesky)   | `MVT()`         | Continous <br /> (Multivariate)   | $y \in (-\infty,\infty)$  | 
-| Dirichlet                                  | `Dirichlet()`   | Continous <br /> (Multivariate)   | $y \in [0,1]$             | 
+| Dirichlet                                  | `DIRICHLET()`   | Continous <br /> (Multivariate)   | $y \in [0,1]$             | 
 
 
 <!---
