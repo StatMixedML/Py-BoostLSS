@@ -94,7 +94,10 @@ class Distribution_Loss(Loss):
             floats, base_margins            
         """             
 
-        n_target = self.dist.D
+        if hasattr(self.dist, "r"):
+            n_target = [self.dist.D, self.dist.r]
+        else:
+            n_target = self.dist.D
         base_margin = self.dist.initialize(y_true, n_target)
                       
         return base_margin
