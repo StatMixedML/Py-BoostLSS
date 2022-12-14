@@ -1,6 +1,5 @@
 import torch
 from torch.distributions.multivariate_normal import MultivariateNormal
-from scipy.stats import multivariate_normal
 import cupy as cp 
 import numpy as np
 import pandas as pd
