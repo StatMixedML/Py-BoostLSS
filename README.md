@@ -43,11 +43,12 @@ We refer to the [examples section](https://github.com/StatMixedML/Py-BoostLSS/tr
 ## Available Distributions
 At this time, Py-BoostLSS supports the following distributions. More distribution follow soon.
 
-| Distribution                               |  Usage          |Type                               | Support                   
-| :----------------------------------------: |:--------------: |:--------------------------------: | :-----------------------: | 
-| Multivariate Normal <br /> (Cholesky)      | `MVN()`         | Continous <br /> (Multivariate)   | $y \in (-\infty,\infty)$  | 
-| Multivariate Student-T <br /> (Cholesky)   | `MVT()`         | Continous <br /> (Multivariate)   | $y \in (-\infty,\infty)$  | 
-| Dirichlet                                  | `DIRICHLET()`   | Continous <br /> (Multivariate)   | $y \in [0,1]$             | 
+| Distribution                                                 |  Usage          |Type                               | Support                   
+| :----------------------------------------------------------: |:--------------: |:--------------------------------: | :-----------------------: | 
+| Multivariate Normal <br /> (Cholesky)                        | `MVN()`         | Continous <br /> (Multivariate)   | $y \in (-\infty,\infty)$  | 
+| Multivariate Normal <br /> (Low-Rank Approximation)          | `MVN_LRA()`     | Continous <br /> (Multivariate)   | $y \in (-\infty,\infty)$  | 
+| Multivariate Student-T <br /> (Cholesky)                     | `MVT()`         | Continous <br /> (Multivariate)   | $y \in (-\infty,\infty)$  | 
+| Dirichlet                                                    | `DIRICHLET()`   | Continous <br /> (Multivariate)   | $y \in [0,1]$             | 
 
 
 <!---
