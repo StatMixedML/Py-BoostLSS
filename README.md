@@ -41,7 +41,7 @@ pip install git+https://github.com/StatMixedML/Py-BoostLSS.git
 We refer to the [examples section](https://github.com/StatMixedML/Py-BoostLSS/tree/main/examples) for example notebooks.
 
 ## Available Distributions
-At this time, Py-BoostLSS supports the following distributions. More distribution follow soon.
+Py-BoostLSS currently supports the following distributions. More distribution follow soon.
 
 | Distribution                                                 |  Usage          |Type                               | Support                   
 | :----------------------------------------------------------: |:--------------: |:--------------------------------: | :-----------------------: | 
