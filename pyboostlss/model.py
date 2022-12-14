@@ -1,6 +1,6 @@
 from pyboostlss.distributions.distribution_loss_metric import *
 from pyboostlss.utils import *
-from py_boost import SketchBoost
+from py_boost.gpu.sketch_boost import SketchBoost
 
 import optuna
 from optuna.samplers import TPESampler
@@ -107,7 +107,11 @@ class PyBoostLSS:
         
         
         # Append Target
-        n_target = self.dist.D
+        if hasattr(self.dist, "r"):
+            n_target = [self.dist.D, self.dist.r]
+        else:
+            n_target = self.dist.D            
+        
         y_train_append = self.dist.target_append(dtrain["y"], self.dist.n_dist_param(n_target))
         
         if eval_sets is not None:
