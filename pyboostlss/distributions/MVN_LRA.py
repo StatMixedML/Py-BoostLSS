@@ -26,7 +26,7 @@ class MVN_LRA:
         
         
     def initialize(self, y_true: cp.ndarray, n_target: list) -> cp.ndarray:    
-        """ Function that calculates the starting values, for each distributional parameter individually. It uses the LBFGS for estimating unconditional parameter estimates.
+        """ Function that calculates the starting values, for each distributional parameter individually. It uses the L-BFGS algorithm for estimating unconditional parameter estimates.
     
         y_true: cp.ndarray
                 Data from which starting values are calculated.
