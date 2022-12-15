@@ -141,7 +141,7 @@ class MVN:
     
 
     def get_params_nll(self, y_true: cp.ndarray, y_pred: cp.ndarray, requires_grad=False) -> torch.tensor:
-        """ Returns target and estimated parameters, where parameters are transformed to the output scale
+        """ Returns estimated parameters and nll, where parameters are transformed to the output scale.
         
         Args:
             y_true: cp.ndarray, Input target variables
