@@ -1,5 +1,6 @@
 import torch
 from torch.distributions.lowrank_multivariate_normal import LowRankMultivariateNormal
+import torch.optim as optim
 import cupy as cp 
 import numpy as np
 import pandas as pd
@@ -22,18 +23,102 @@ class MVN_LRA:
         self.D = D # specifies target dimension
         self.dtype = torch.float32
         
-
-    def initialize(self, y_true: cp.ndarray, n_target: list) -> cp.ndarray:
-        """ Function that calculates the starting values, for each distributional parameter individually. Right now, it is initialized with ones.
+        
+        
+    def initialize(self, y_true: cp.ndarray, n_target: list) -> cp.ndarray:    
+        """ Function that calculates the starting values, for each distributional parameter individually. It uses the LBFGS for estimating unconditional parameter estimates.
+    
         y_true: cp.ndarray
-            Data from which starting values are calculated.
+                Data from which starting values are calculated.
         n_target: list
-            List that holds number of targets and rank-parameter.
+                List that holds number of targets and rank-parameter.
         """
-        n_param = self.n_dist_param(n_target)
-        start_values = cp.ones((n_param,))
 
-        return start_values
+        torch.manual_seed(123)
+
+        n_param = self.n_dist_param(n_target)
+        n_target = self.D
+        param_init = torch.ones(1, n_param, device="cuda", dtype=self.dtype)
+        param_init = torch.nn.init.xavier_uniform_(param_init)    
+        param_init.requires_grad=True
+        y_true_tens = torch.tensor(y_true[:,:n_target], device="cuda", dtype=self.dtype)
+
+
+        def nll_init(y_true: cp.ndarray, y_pred: cp.ndarray, requires_grad=True) -> torch.tensor:        
+
+            n_target = self.D  
+            n_param = self.n_dist_param([self.D, self.r])
+            rank = self.r
+
+            ###
+            # Target
+            ###    
+            target = torch.as_tensor(y_true[:,:n_target], device="cuda", dtype=self.dtype).reshape(-1, n_target)
+
+            ###
+            # Parameters
+            ###
+            predt = [y_pred[:, i].reshape(-1,1) for i in range(n_param)]
+
+            # Location
+            predt_location = torch.concat(predt[:n_target],axis=1)
+
+            # Low Rank Factor
+            predt_covfactor = torch.concat(predt[n_target:(n_param-n_target)], axis=1).reshape(-1, n_target, rank) # (n_obs, n_target, rank)
+
+            # Low Rank Diagonal (must be positive)
+            predt_covdiag = predt[-n_target:]
+            predt_covdiag = [exp_fn(predt_covdiag[i]) for i in range(len(predt_covdiag))]
+            predt_covdiag = torch.concat(predt_covdiag, axis=1)
+
+            ###
+            # NLL
+            ###
+            dist_fit = LowRankMultivariateNormal(loc=predt_location, cov_factor=predt_covfactor, cov_diag=predt_covdiag, validate_args=False)   
+            nll = -torch.nansum(dist_fit.log_prob(target)) 
+
+            return nll
+
+    
+        def closure():
+            
+            lbfgs.zero_grad()
+            objective = nll_init(y_true=y_true_tens, y_pred=param_init)
+            objective.backward()
+
+            return objective
+
+
+
+        lbfgs = optim.LBFGS(params=[param_init],
+                            lr=1e-03,
+                            history_size=10, 
+                            max_iter=4, 
+                            line_search_fn="strong_wolfe")
+
+        for i in range(20):
+            lbfgs.step(closure)
+
+        start_values = cp.array(lbfgs.param_groups[0]["params"][0].cpu().detach()).reshape(-1,)
+
+        return start_values   
+    
+    
+        
+
+#     def initialize(self, y_true: cp.ndarray, n_target: list) -> cp.ndarray:
+#         """ Function that initializes each distributional parameter with ones. Compared to the LBFGS, this is more runtime efficient.
+#         y_true: cp.ndarray
+#             Data from which starting values are calculated.
+#         n_target: list
+#             List that holds number of targets and rank-parameter.
+#         """
+#         n_param = self.n_dist_param(n_target)
+#         start_values = cp.ones((n_param,))
+
+#         return start_values
+
+
 
 
     def n_dist_param(self, n_targets: list) -> int:
