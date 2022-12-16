@@ -53,7 +53,7 @@ class MVN_LRA:
             ###
             # Target
             ###    
-            target = torch.as_tensor(y_true[:,:n_target], device="cuda", dtype=self.dtype).reshape(-1, n_target)
+            target = y_true[:,:n_target]
 
             ###
             # Parameters
@@ -95,9 +95,10 @@ class MVN_LRA:
                             history_size=10, 
                             max_iter=4, 
                             line_search_fn="strong_wolfe")
+        
 
         for i in range(20):
-            lbfgs.step(closure)
+            lbfgs.step(closure)            
 
         start_values = cp.array(lbfgs.param_groups[0]["params"][0].cpu().detach()).reshape(-1,)
 
