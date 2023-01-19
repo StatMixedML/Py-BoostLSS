@@ -81,8 +81,6 @@ We genuinely thank the original authors [Anton Vakhrushev](https://www.kaggle.co
 [![Arxiv link](https://img.shields.io/badge/arXiv-XGBoostLSS%3A%20An%20extension%20of%20XGBoost%20to%20probabilistic%20forecasting-color=brightgreen)](https://arxiv.org/abs/1907.03178) <br/>
 
 <!---
-März, Alexander (2022) [*Py-BoostLSS: An extension of Py-Boost to probabilistic modelling*](). <br/>
-<br />
 März, Alexander (2022) [*Multi-Target XGBoostLSS Regression*](https://arxiv.org/abs/2210.06831). <br/>
 <br />
 März, A. and Kneib, T. (2022) [*"Distributional Gradient Boosting Machines"*](https://arxiv.org/abs/2204.00778). <br/>
